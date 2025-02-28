@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # Получаем токен из переменной окружения
 TOKEN = os.getenv('TOKEN')
 # Укажите ваш URL на Render
-WEBHOOK_URL = 'https://your-render-url.com/webhook'
+WEBHOOK_URL = 'https://api.render.com/deploy/srv-cv0t9ta3esus73aqopj0?key=Ivyf7GJda5s'
 
 # Функция для отправки сообщения "Размут @user_id"
 async def unmute_user(context: CallbackContext):

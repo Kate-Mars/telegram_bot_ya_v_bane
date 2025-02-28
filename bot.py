@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 # Получаем токен из переменной окружения
 TOKEN = os.getenv('TOKEN')
+# Укажите ваш URL на Render
+WEBHOOK_URL = 'https://your-render-url.com/webhook'
 
 # Функция для отправки сообщения "Размут @user_id"
 async def unmute_user(context: CallbackContext):
@@ -91,9 +93,15 @@ def main():
     # Добавляем обработчик ошибок
     application.add_error_handler(error_handler)
 
-    # Запускаем бота
-    logger.info("Бот запущен.")
-    application.run_polling()
+    # Устанавливаем вебхук
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=5000,
+        url_path=TOKEN,
+        webhook_url=WEBHOOK_URL
+    )
+
+    logger.info("Бот запущен с использованием вебхуков.")
 
 if __name__ == '__main__':
     main()

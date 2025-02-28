@@ -1,9 +1,9 @@
-import re
 import os
+import re
 from telegram import Update, MessageEntity
 from telegram.ext import Application, MessageHandler, filters, CallbackContext
 
-TOKEN = os.getenv('TOKEN')
+TOKEN = os.getenv('TOKEN')  # Получаем токен из переменной окружения
 
 # Функция для отправки сообщения "Размут @user_id"
 async def unmute_user(context: CallbackContext):
@@ -71,7 +71,8 @@ async def handle_message(update: Update, context: CallbackContext):
                 )
 
 def main():
-    application = Application.builder().token(TOKEN).build()
+    # Создаем Application с включенным job_queue
+    application = Application.builder().token(TOKEN).job_queue(None).build()
 
     # Добавляем обработчик текстовых сообщений
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
@@ -81,4 +82,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

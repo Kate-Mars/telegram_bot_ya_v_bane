@@ -95,10 +95,10 @@ def main():
 
     # Устанавливаем вебхук
     application.run_webhook(
-        listen="0.0.0.0",
-        port=5000,
-        url_path=TOKEN,
-        webhook_url=WEBHOOK_URL
+        listen="0.0.0.0",  # Слушаем все интерфейсы
+        port=5000,         # Порт, на котором работает бот
+        url_path=TOKEN,    # Путь для вебхука
+        webhook_url=WEBHOOK_URL  # Полный URL для вебхука
     )
 
     logger.info("Бот запущен с использованием вебхуков.")

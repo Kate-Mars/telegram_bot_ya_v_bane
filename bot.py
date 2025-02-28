@@ -1,8 +1,9 @@
 import re
+import os
 from telegram import Update, MessageEntity
 from telegram.ext import Application, MessageHandler, filters, CallbackContext
 
-TOKEN = '8084478893:AAFM_VQOn7lwTZZpmorl44Sf5NFT6NxC7Ak'
+TOKEN = os.getenv('TOKEN')
 
 # Функция для отправки сообщения "Размут @user_id"
 async def unmute_user(context: CallbackContext):

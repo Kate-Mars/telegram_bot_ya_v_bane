@@ -1,8 +1,18 @@
+import os
 import re
+import logging
 from telegram import Update, MessageEntity
 from telegram.ext import Application, MessageHandler, filters, CallbackContext
 
-TOKEN = '8084478893:AAFM_VQOn7lwTZZpmorl44Sf5NFT6NxC7Ak'
+# Настройка логирования
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+# Получаем токен из переменной окружения
+TOKEN = os.getenv('TOKEN')
 
 # Функция для отправки сообщения "Размут @user_id"
 async def unmute_user(context: CallbackContext):
@@ -11,6 +21,7 @@ async def unmute_user(context: CallbackContext):
     user_id = job.data['user_id']
 
     await context.bot.send_message(chat_id=chat_id, text=f"Размут @{user_id}")
+    logger.info(f"Пользователь @{user_id} размучен.")
 
 # Обработчик сообщений
 async def handle_message(update: Update, context: CallbackContext):
@@ -48,6 +59,7 @@ async def handle_message(update: Update, context: CallbackContext):
 
                 # Отправляем сообщение "Мут @user_id"
                 await context.bot.send_message(chat_id=chat_id, text=f"Мут @{user_id}")
+                logger.info(f"Пользователь @{user_id} замьючен.")
 
                 # Планируем сообщение "Размут @user_id"
                 context.job_queue.run_once(
@@ -63,19 +75,24 @@ async def handle_message(update: Update, context: CallbackContext):
                     text=f"Не удалось извлечь user_id для пользователя {display_name}. "
                          f"Проверьте формат сообщения."
                 )
-                # Для отладки выведем все сущности сообщения
-                await context.bot.send_message(
-                    chat_id=message.chat_id,
-                    text=f"Сущности сообщения: {message.entities}"
-                )
+                logger.warning(f"Не удалось извлечь user_id для пользователя {display_name}.")
+
+# Обработчик ошибок
+async def error_handler(update: Update, context: CallbackContext):
+    logger.error(f"Ошибка: {context.error}")
 
 def main():
-    application = Application.builder().token(TOKEN).build()
+    # Создаем Application с включенным job_queue
+    application = Application.builder().token(TOKEN).job_queue(None).build()
 
     # Добавляем обработчик текстовых сообщений
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
+    # Добавляем обработчик ошибок
+    application.add_error_handler(error_handler)
+
     # Запускаем бота
+    logger.info("Бот запущен.")
     application.run_polling()
 
 if __name__ == '__main__':
